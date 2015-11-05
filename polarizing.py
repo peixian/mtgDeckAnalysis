@@ -3,11 +3,17 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import json 
+from pprint import pprint 
 
-#reads the filename, spits out a dataframe
+#reads the filename, adds the colors, spits out a dataframe
 #   
 def parse(filename):
-    return pd.read_excel(filename)
+    df = pd.read_csv(filename)
+    with open("BFZ.json") as json_data:
+        data = json.load(json_data)
+    
+   
 
 #emperical baysian analysis on the dataframe
 
@@ -29,7 +35,7 @@ if __name__ == '__main__':
     else:
         try: 
             df = parse(argv[1])
-            print(df) 
+            #print(df) 
             
         except IOError:
             print("File doesn't exist.\n")
