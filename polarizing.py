@@ -37,11 +37,6 @@ def fit(df):
    
     
     df["ebWin%"] = df[["Win", "Total"]].apply(lambda x: (x[0] + a)/(x[1] + a + b), axis=1)
-    # df["alpha1"] = df[["Win"]].apply(lambda x: x[0]+a, axis = 1)
-    # df["beta1"] = df[["Win", "Total"]].apply(lambda x: x[1] - x[0] + b, axis = 1)
-    # print((df["Win"][:3], df["Total"][:3]))
-    # print((df["Win%"][:3]))
-    # print(df["ebWin%"][:3])
     return (df.sort("ebWin%", ascending=False))
     
 def analyze(df, color = "All Colors", rarity = "All rarities", top = 50):
@@ -54,9 +49,6 @@ def analyze(df, color = "All Colors", rarity = "All rarities", top = 50):
     else:
         df = df[(df.Color == color) & (df.Rarity == rarity)]
     df = df[:top].sort("ebWin%", ascending=False)
-    # d["low"] = d[["alpha1", "beta1"]].apply(lambda x: stats.beta.ppf(.025, x["alpha1"], x["beta1"]), axis = 1)
-    # d["high"] = d[["alpha1", "beta1"]].apply(lambda x: stats.beta.ppf(.975, x["alpha1"], x["beta1"]), axis = 1)
-    print(df)
    
     fig, ax = plt.subplots()
     ax.set_title("BFZ Top {} for {} at {}".format(top, color, rarity))
@@ -65,8 +57,9 @@ def analyze(df, color = "All Colors", rarity = "All rarities", top = 50):
     ax = sns.stripplot(x = "ebWin%", y="Card", hue="Color",data=df,orient="h")
     ax.legend_.remove()
     plt.tight_layout()
-    plt.savefig("Top_{}_for_{}_at_{}.pdf".format(top, color, rarity))
+    plt.savefig("Top_{}_for_{}_at_{}.png".format(top, color, rarity))
     
+    return df
 
 #main method
 #yes I write bad code, thanks for pointing it out python
@@ -86,11 +79,12 @@ with warnings.catch_warnings():
         else:
             try: 
                 df = parse(argv[1])
-                cList = ["White", "Blue", "Black", "Red", "Green", "0"]
-                rList = ["C", "U", "R", "M"]
+                cList = ["All Colors", "White", "Blue", "Black", "Red", "Green", "0"]
+                rList = ["All rarities", "C", "U", "R", "M"]
                 for c in cList:
                     for r in rList:
                         analyze(fit(df), color = c, rarity = r, top = 15)
+
             except IOError:
                 print("File doesn't exist.\n")
                 exit(-1)
